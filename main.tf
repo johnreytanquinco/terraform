@@ -2,22 +2,6 @@ provider "aws" {
   region = "us-east-2"
 }
 
-resource "aws_instance" "example" {
-  ami                   = var.image_id
-  instance_type         = var.instance_type
-  vpc_security_group_ids = [aws_security_group.instance.id]
-
-  user_data = <<-EOF
-              #!/bin/bash
-              echo "Hello, World" > index.html
-              nohup busybox httpd -f -p {$var.server_port} &
-              EOF
-
-  tags = {
-    Name = "terraform-example"
-  }
-}
-
 resource "aws_security_group" "instance" {
   name = "terraform-example-instance"
 
@@ -37,7 +21,7 @@ resource "aws_launch_configuration" "example" {
   user_data = <<-EOF
               #!/bin/bash
               echo "Hello, WORLD" > index.html
-              nohup busybox httpd -f -p {$var.server_port} &
+              nohup busybox httpd -f -p ${var.server_port} &
               EOF
   # Required when using a LC with an ASG
   lifecycle {
